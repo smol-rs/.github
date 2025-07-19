@@ -39,5 +39,6 @@ jobs:
           while read -rd' '; do
             additional_targets+=(--target "${REPLY}")
           done <<<"${{ inputs.additional-targets }} "
+          set -x
           cargo clippy --all-features --all-targets "${additional_targets[@]}"
         if: inputs.additional-targets != ''

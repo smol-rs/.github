@@ -29,6 +29,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install Rust
         run: rustup update stable
+      - name: Install cargo-audit
+        uses: taiki-e/install-action@cargo-audit
       # rustsec/audit-check used to do this automatically
       - name: Generate Cargo.lock
         run: cargo generate-lockfile
