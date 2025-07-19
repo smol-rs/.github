@@ -1,0 +1,43 @@
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      additional-targets:
+        required: false
+        type: string
+        default: ''
+
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_GIT_FETCH_WITH_CLI: true
+  CARGO_NET_RETRY: 10
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  RUSTFLAGS: -D warnings
+  RUSTDOCFLAGS: -D warnings
+  RUSTUP_MAX_RETRIES: 10
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -CeEuo pipefail {0}
+
+jobs:
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        run: rustup update stable
+      - name: Install targets
+        run: rustup target add ${{ inputs.additional-targets }}
+        if: inputs.additional-targets != ''
+      - run: cargo clippy --all-features --all-targets
+      - run: |
+          additional_targets=()
+          while read -rd' '; do
+            additional_targets+=(--target "${REPLY}")
+          done <<<"${{ inputs.additional-targets }} "
+          cargo clippy --all-features --all-targets "${additional_targets[@]}"
+        if: inputs.additional-targets != ''
