@@ -22,7 +22,7 @@ jobs:
   fmt:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: taiki-e/checkout-action@v1
       - name: Install Rust
         run: rustup update stable
       - run: cargo fmt --all --check
