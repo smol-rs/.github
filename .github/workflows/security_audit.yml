@@ -29,8 +29,13 @@ jobs:
       - uses: taiki-e/checkout-action@v1
       - name: Install Rust
         run: rustup update stable
-      - name: Install cargo-audit
-        uses: taiki-e/install-action@cargo-audit
+      - name: Install cargo-audit and cargo-hack
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit,cargo-hack
+      # Workaround for https://github.com/rustsec/rustsec/issues/501
+      - name: Remove dev-deps
+        run: cargo hack --remove-dev-deps
       # rustsec/audit-check used to do this automatically
       - name: Generate Cargo.lock
         run: cargo generate-lockfile
